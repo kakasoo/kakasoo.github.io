@@ -1,5 +1,46 @@
 <!DOCTYPE html>
-<body>
-    <div id="root"></div>
-<script src="bundle.js?3af9faea1354e6522518"></script></body>
-<script type="module" src="index.js"></script>
+<head>
+    <link
+        rel="stylesheet"
+        href="//cdn.jsdelivr.net/highlight.js/8.7/styles/monokai_sublime.min.css"
+    />
+    <script src="https://unpkg.com/react@15/dist/react.js"></script>
+    <script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+</head>
+<html style="max-height: 100vh">
+    <body
+        style="
+            margin: 0px;
+            height: 100%;
+            background: linear-gradient(to right, black, #505759);
+            overflow-x: hidden;
+            overflow-y: hidden;
+        "
+    >
+        <div id="root" style="height: 100%; width: 100%"></div>
+    <script src="bundle.js?8a50ac9184a43c08fd20"></script></body>
+    <script>
+        const getBrowserSize = () => {
+            let div = document.createElement("div");
+            div.style.position = "absolute";
+            div.style.top = 0;
+            div.style.left = 0;
+            div.style.width = "100%";
+            div.style.height = "100%";
+            document.documentElement.appendChild(div);
+            const results = {
+                width: div.offsetWidth,
+                height: div.offsetHeight,
+            };
+            div.parentNode.removeChild(div);
+            return results;
+        };
+
+        const { width, height } = getBrowserSize();
+        document.getElementById("root").style.minWidth = width + "px";
+        document.getElementById("root").style.minHeight = height + "px";
+    </script>
+</html>
