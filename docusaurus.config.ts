@@ -3,8 +3,8 @@ import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
 
 const config: Config = {
-    title: "kakasoo",
-    tagline: "kakasoo",
+    title: "kakasoo의 이것저것 옮기는 블로그",
+    // tagline: "kakasoo",
     favicon: "img/favicon.ico",
 
     // Set the production url of your site here
@@ -20,7 +20,7 @@ const config: Config = {
 
     onBrokenLinks: "throw",
     onBrokenMarkdownLinks: "warn",
-    deploymentBranch: "gh-pages",
+    deploymentBranch: "main",
     trailingSlash: true,
 
     // Even if you don't use internationalization, you can use this field to set
