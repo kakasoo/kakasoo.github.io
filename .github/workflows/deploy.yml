@@ -1,0 +1,31 @@
+name: Deploy Docusaurus
+
+on:
+    push:
+        branches:
+            - main # main 브랜치에 푸시될 때마다 배포
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20" # 사용하고자 하는 Node.js 버전
+
+            - name: Install dependencies
+              run: npm install
+
+            - name: Build Docusaurus
+              run: npm run build
+
+            - name: Deploy to GitHub Pages
+              uses: peaceiris/actions-gh-pages@v3
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  publish_dir: ./build # Docusaurus의 빌드 결과물이 위치하는 디렉토리
