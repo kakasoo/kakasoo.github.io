@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkkakasoo=self.webpackChunkkakasoo||[]).push([[472],{5513:e=>{e.exports=JSON.parse('{"title":"Recent posts","items":[{"title":"2. \ub450\ubc88\uc9f8 \uae00","permalink":"/blog/2","unlisted":false,"date":"2024-10-03T00:00:00.000Z"},{"title":"1. \uccab \uae00","permalink":"/blog/1","unlisted":false,"date":"2024-10-02T00:00:00.000Z"}]}')}}]);

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type="text/xsl" href="rss.xsl"?>
+<rss version="2.0">
+    <channel>
+        <title>kakasoo의 이것저것 옮기는 블로그 Blog</title>
+        <link>https://kakasoo.github.io/blog/</link>
+        <description>kakasoo의 이것저것 옮기는 블로그 Blog</description>
+        <lastBuildDate>Thu, 03 Oct 2024 00:00:00 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>https://github.com/jpmonette/feed</generator>
+        <language>ko</language>
+        <item>
+            <title><![CDATA[2. 두번째 글]]></title>
+            <link>https://kakasoo.github.io/blog/2/</link>
+            <guid>https://kakasoo.github.io/blog/2/</guid>
+            <pubDate>Thu, 03 Oct 2024 00:00:00 GMT</pubDate>
+            <category>kakasoo</category>
+        </item>
+        <item>
+            <title><![CDATA[1. 첫 글]]></title>
+            <link>https://kakasoo.github.io/blog/1/</link>
+            <guid>https://kakasoo.github.io/blog/1/</guid>
+            <pubDate>Wed, 02 Oct 2024 00:00:00 GMT</pubDate>
+            <category>kakasoo</category>
+        </item>
+    </channel>
+</rss>

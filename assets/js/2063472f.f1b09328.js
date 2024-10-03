@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkkakasoo=self.webpackChunkkakasoo||[]).push([[215],{7646:a=>{a.exports=JSON.parse('{"tags":[{"label":"kakasoo","permalink":"/blog/tags/kakasoo","count":2}]}')}}]);
