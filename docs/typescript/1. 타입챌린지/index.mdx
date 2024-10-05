@@ -1,0 +1,39 @@
+# 타입챌린지
+
+[00013. HelloWorld](https://github.com/type-challenges/type-challenges/blob/main/questions/00013-warm-hello-world/README.md)
+
+이 문제는 wrm-up 레벨로, 타입 챌린지를 어떻게 푸는 것인지를 알려주기 위해 존재합니다.
+
+문제에는 다음과 같이 써있습니다.
+
+> Hello, World!
+>
+> In Type Challenges, we use the type system itself to do the assertion.
+>
+> For this challenge, you will need to change the following code to make the tests pass (no type check errors).
+>
+> ```tsx
+> // expected to be string
+> type HelloWorld = any;
+> ```
+>
+> ```tsx
+> // you should make this work
+> type test = Expect<Equal<HelloWorld, string>>;
+> ```
+>
+> Click the `Take the Challenge` button to start coding! Happy Hacking!
+
+이 두 개의 코드 박스를 보면, `HelloWorld` 라는 타입 별칭으로 정의된 타입이 any로 정의되어 있습니다.
+
+그리고 테스트 용으로 만들어둔 유틸 타입인 Equal 타입으로 string인지 아닌지를 검사하고 있죠.
+
+이 문제가 의미하는 바는 `HelloWorld` 가 string이 되도록 하라는 것이므로 정답은 아래와 같습니다.
+
+```tsx
+type HelloWorld = string;
+```
+
+간단하죠?
+
+이와 같은 방법으로 다음 타입 챌린지 문제들도 차례대로 격파해봅시다.

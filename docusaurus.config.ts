@@ -35,7 +35,9 @@ const config: Config = {
         [
             "classic",
             {
-                docs: false, // 문서화 비활성화
+                docs: {
+                    breadcrumbs: true,
+                },
                 blog: {
                     showReadingTime: true,
                     feedOptions: {
@@ -64,6 +66,7 @@ const config: Config = {
             //     src: "img/logo.svg",
             // },
             items: [
+                { to: "/docs", label: "Docs", position: "left" },
                 { to: "/blog", label: "Blog", position: "left" },
                 {
                     href: "https://github.com/facebook/docusaurus",

@@ -1,0 +1,549 @@
+---
+title: 간단한 타입의 구현
+authors: [kakasoo]
+tags: []
+categories: []
+---
+
+# 간단한 타입의 구현
+
+## 타입스크립트에 대해서
+
+타입스크립트라는 언어는 무척이나 표현력이 강해서 타입만 가지고도 알고리즘 작성이 가능한 수준입니다.
+
+다만 모든 타입을 표현하는 것은 불가능합니다.
+
+예를 들어 타입스크립트에서 타입으로 표현 가능한 튜플의 length는 최대 999 까지만입니다.
+
+타입스크립트는 타입스크립트 버전에 따라 제약이 풀리거나 기존에 없던 새 기능이 추가되기도 합니다.
+
+이 과정에서 기존에 작성 불가능한 타입을 표현할 수 있게 되기도 하지만, 그럼에도 불가능한 타입이 존재합니다.
+
+대부분의 경우 이는 언어의 표현력 문제라기보다 너무 많은 연산을 사용하는 것을 방지하기 위한 제한입니다.
+
+## 타입 레벨(type level)
+
+이제부터 자바스크립트와 타입스크립트를 엄격히 구분지어야 합니다.
+
+Node.js 개발자들은 이제 타입을 다루는 타입스크립트와 값을 다루는 자바스크립트를 다룹니다.
+
+만약 개발자가 커스텀된 타입을 짜지 못한다면, 사실 그 개발자의 코드는 자바스크립트랑 다를 게 없습니다.
+
+엄격하게 코드에 타입을 정의했다고 하더라도, 타입스크립트를 100% 활용했다고 말할 수는 없습니다.
+
+타입스크립트에, 타입스크립트를 위한, 타입스크립트를 위한 기능은 뭐가 있을까요?
+
+무엇을 해야 자바스크립트와 타입스크립트를 구분지을 수 있는 걸지, 아래에서 얘기해봅시다.
+
+## 타입스크립트와 자바스크립트
+
+```tsx
+const example1: number = 1;
+const example2: string = "2";
+const example3: (...param: any[]) => any = () => {};
+```
+
+타입스크립트에서 타입을 명시한 식별자들을 표기하는 방식입니다.
+
+콜론 기호를 이용해 타입을 명시하며 그 외에는 자바스크립트와 동일합니다.
+
+함수의 경우에도 동일하며 대신 함수는 함수의 꼴을 본 뜬 타입을 명시해야 합니다.
+
+이 때, 함수는 파라미터와 리턴 타입을 명시할 수도 있습니다.
+
+여기서는 아무거나 상관없다는 의미로 나머지 연산으로 표현한 param을 any[]로, 리턴 타입도 any입니다.
+
+그러면 이제 식별자에 지정 가능한 타입은 뭐가 있을까요?
+
+## 원시 타입(Primitive types)과 any
+
+타입스크립트에는 string, number, boolean 타입이 있습니다.
+
+여기까지 아셨다면 이제 JavaScript의 모든 타입을 배운 것이나 마찬가지입니다.
+
+대부분의 강 타입 언어들은 이 원시형 타입들을 변수에 미리 지정해두는 것으로 프로그래밍을 시작합니다.
+
+타입스크립트에서는 지정하지 않은 경우에는 any로 명시될 뿐, 여기까지는 모두 동일합니다.
+
+고로 자바스크립트에서는 어떠한 타입도 지정되지 않았으므로 모든 게 any인 타입스크립트라 할 수 있죠.
+
+## 래퍼 객체와 원시 타입
+
+자바스크립트에서는 Number, Boolean, String 등 래퍼 객체가 존재합니다.
+
+그래서 Number(3)과 같이 원시 타입 객체를 생성할 수 있습니다.
+
+하지만 이 래퍼 객체들은 타입스크립트에서 지양하는 것이 좋습니다.
+
+우리가 자주 사용하게 될 typeof 키워드는 값 레벨에서나 타입 레벨에서나 래퍼 객체를 가리킬 일이 없습니다.
+
+## 리터럴 타입
+
+타입스크립트에서는 대부분의 언어들과 달리 원시 타입보다 더 하위의 타입을 표현할 수 있습니다.
+
+이를 리터럴 타입이라고 하는데, 예를 들면 ‘hello world’ 타입이 있을 수 있습니다.
+
+‘hello world’는 string 입니다.
+
+하지만 string이 곧 ‘hello world’일 수는 없습니다.
+
+마찬가지로 숫자 10은 number지만 number가 10인 것은 아닙니다.
+
+```tsx
+type Example = "helloWorld";
+const e: Example = "helloWorld"; // 'helloWorld' 외에는 대입 시 에러가 발생한다.
+```
+
+이런 리터럴 타입의 선언이 타입스크립트가 수 많은 타입을 표현할 수 있게 돕는 일등공신입니다.
+
+## nullable 타입
+
+자바스크립트에는 undefined와 null이 있죠.
+
+타입스크립트에도 undefined와 null 타입이 존재하고 이 둘은 엄격히 구분되는 타입입니다.
+
+만약 객체에서 프로퍼티의 타입으로 undefined와 null이 쓰였다면 이 또한 아예 명시하지 않은 것과 별개입니다.
+
+즉, 명시하지 않은 프로퍼티가 JavaScript에서 undefined 라는 값으로 평가되는 것과는 다릅니다.
+
+만약 IDE에서 이것들이 구분되지 않는다면 tsconfig.json 파일을 반드시 살펴봐야 합니다.
+
+아직 tsconfig.json 파일이 어색하시다면 이 말은 무시하세요.
+
+```jsx
+// tsconfig.json
+"strictNullChecks": true
+```
+
+## never 타입
+
+그 다음으로는 never 타입이 있습니다.
+
+자바스크립트에서 모든 타입은 any입니다.
+
+따라서 타입스크립트에서도 모든 타입은 any 안에 속한다고 볼 수 있습니다.
+
+그렇다면 반대로 아무것도 속하지 않는 타입이 있다면 이 타입은 뭐라고 해야 할까요?
+
+타입스크립트에서는 이러한 유형의 타입을 never라고 하는데, 집합에서는 공집합을 의미하는 타입입니다.
+
+## never와 extends 조건부 타입
+
+never에 조건을 걸 경우 조건은 실행도 되지 않습니다.
+
+이는 Array.prototype의 메서드들이 빈 배열일 때에는 순회를 아예 시작하지 못하는 것과 유사합니다.
+
+never는 어떠한 것도 속하지 않은 공집합의 타입이기 때문에 결코 타입이 검사되지 않습니다.
+
+이해가 언뜻 되지 않을 수 있지만, 아무것도 없기 때문에 조건을 체크할 대상조차 없다고 이해하시면 됩니다.
+
+```tsx
+type Example<T> = T extends any ? true : false;
+
+type e = Example<never>; // true도 false도 아닌 never로 추론된다.
+```
+
+## never를 검증하는 법
+
+```tsx
+type IsNever<T> = any;
+
+type e = IsNever<never>;
+```
+
+하지만 never인지 아닌지 검증하는 법을 영영 몰라서는 안 되겠죠.
+
+하지만 어떻게 해야 이 타입을 추론해낼 수 있을까요?
+
+타입스크립트에서 never를 검증하기 위한 방법은 암기할 수 밖에 없습니다.
+
+바로 아래와 같은 형태입니다.
+
+```tsx
+type IsNever<T> = [T] extends [never] ? true : false;
+```
+
+## 유니온 타입(Union type)
+
+유니온 타입은 ‘또는’의 의미로 해석하면 되고 파이프를 이용해 표기합니다.
+
+아래에서는 숫자 또는 문자열을 의미하는 타입을 정의했습니다.
+
+아래에서는 숫자 또는 문자를 의미하는 타입이 되었기에 1과 ‘1’ 모두 대입이 가능합니다.
+
+```tsx
+type Example = number | string;
+
+const e1: Example = 1;
+const e2: Example = "1";
+```
+
+## 타입추론(Type **Inference)**
+
+만약 당신이 true | false 라는 타입을 명시했다면 true 또는 false이고, 이는 boolean으로 추론됩니다.
+
+타입스크립트에서는 이런 현상을 가장 적절한 타입 (Best Common Type)이라고 합니다.
+
+해당 타입을 표현하기에 가장 적절한 표현식이 존재한다면 대치하는 일을 말합니다.
+
+이런 가장 적절한 타입을 알아내는 것이 바로 타입 추론입니다.
+
+타입스크립트는 직접 타입을 명시하지 않은 경우에도, 추론 가능한 범위 내에서 가장 적절한 타입을 알려줍니다.
+
+이는 유니온 타입에서 매우 유용합니다.
+
+```tsx
+type Example1 = 1 | 2 | 3 | number; // number로 추론된다.
+type Example2 = "a" | "b" | "c" | string; // string으로 추론된다.
+type Example3 = true | false; // boolean으로 추론된다.
+```
+
+## 인터섹션 타입(Intersection type)
+
+‘또는’이 있다면 ‘그리고’ 타입도 있어야겠죠.
+
+아시다시피 ‘또는’의 의미는 집합에서는 합집합을 의미하고, ‘그리고’는 교집합을 의미합니다.
+
+타입스크립트에서 이 타입은 인터섹션 타입, 번역하면 교집합이라 표현하며 & 기호로 나타냅니다.
+
+즉, 정의되어 있는 요소에 속할 수 있는 교집합을 표현한다고 보면 되겠습니다.
+
+아래에서는 1부터 3까지의 수를 의미하는 타입과 오직 2만을 허용하는 타입의 교집합을 정의했습니다.
+
+따라서 e1의 타입은 2이며 값 역시 2를 대입한 경우가 아니면 에러를 뱉습니다.
+
+```tsx
+type Element1 = 1 | 2 | 3;
+type Element2 = 2;
+type Example = Element1 & element2;
+
+const e1: Example = 2;
+```
+
+## 인터페이스 타입에서의 인터섹션
+
+```tsx
+interface Person {
+    name: string;
+    age: number;
+}
+
+interface Address {
+    address: string;
+}
+
+type PersonWithAddress = Person & Address; // { name: strting; age: number; address: string }
+```
+
+유니온 타입에서의 인터섹션은 두 유니온의 공통된 부분만을 뽑아냈습니다.
+
+그런데 인터페이스에서는 인터섹션 타입을 사용하면 두 인터페이스가 합성된 타입으로 나옵니다.
+
+이는 이해가 안 될 수 있지만 인터섹션이 “둘 다 허용되는 가장 적절한 타입”을 의미한다고 이해하면 쉽습니다.
+
+서로 다른 두 유니온 타입을 둘 다 허용하기 위해서는 그 유니온 타입의 공통된 부분이어야만 합니다.
+
+하지만 인터페이스에서 두 인터페이스를 허용하는 가장 적절한 타입은 두 인터페이스의 병합된 형태 뿐입니다.
+
+## 배열 타입(Array type)
+
+그리고 조금 복잡하지만 가변적인 length를 가지는 Array 타입과, 고정된 length의 Tuple 타입이 있죠.
+
+Tuple 타입에 대해서는 추후 설명하도록 하겠습니다.
+
+Array는 다른 타입이 여러 개가 모였을 때를 의미하며 요소의 수에 대한 제한이 없습니다.
+
+```tsx
+type Example = number[];
+
+const e1: Example = [1, 2, 3, 4, 5];
+```
+
+## 제너릭 타입(Generic type)과 타입 파라미터
+
+함수에는 매개변수가 있죠.
+
+마찬가지로 타입을 작성하는 것도, 타입에 대한 파라미터가 있고, 이를 이용해 타입을 선언할 수 있습니다.
+
+타입 파라미터가 있다면 더 복잡한 타입을 간략하게 표현할 수 있기 때문에 매우 유용합니다.
+
+이러한 타입 파라미터를 가진 타입을 제너릭 타입이라고 부릅니다.
+
+위에서 보여드린 number array 타입을 제너릭으로 작성한다면 아래와 같이 됩니다.
+
+```tsx
+type Example1 = number[];
+type Example2 = Array<number>;
+
+const e2: Example2 = [1, 2, 3, 4, 5];
+```
+
+## 제너릭 타입과 함수 정의
+
+```tsx
+const example = <T extends number>(param: T): T => {
+    return param;
+};
+```
+
+위 코드는 아무런 의미없이, 그저 파라미터를 받아서 그대로 리턴하는 타입입니다.
+
+하지만 이 코드로 제너릭 타입과 함수를 함께 쓰는 법을 충분히 이해할 수 있을 텐데요,
+
+파라미터를 전달하는 소괄호 좌측에 꺽쇠를 이용해 제너릭을 명시해 함수를 명확히 표현하는 것입니다.
+
+그래서 T는 최소한 number이며, 이 T를 인자로 받은 것이 param, 리턴 역시 T 라고 이해할 수 있습니다.
+
+## 조건부 타입(Conditional Type)
+
+타입에도 조건이 있습니다.
+
+삼항 연산자와 같이 물음표와 콜론으로 나타내며, 이 경우에는 extends문을 사용해야 합니다.
+
+‘A extends B ? C : D’ 라는 구문이 있다면, A가 B라면 C고 아니라면 D라고 해석해야 합니다.
+
+```tsx
+type Example = 1 extends number ? true : false;
+
+const e: Example = true; // false시 에러
+```
+
+## 제너릭과 조건부 타입의 사용
+
+조건을 쓴다면 당연히 조건에 필요한 인자들이 있을 겁니다.
+
+위 코드처럼 1 extends number와 같은 조건식들은 우리가 이미 그 정답을 아는 경우가 대부분입니다.
+
+따라서 인자를 받고 인자에 따라 분기처리되는 타입이 있어야 더 풍부한 타입 표현이 가능할 텐데요,
+
+우리는 이미 타입 파라미터를 알고 있습니다.
+
+바로 제너릭입니다.
+
+```tsx
+type Example<T> = T extends string ? true : false;
+
+const e: Example<"abc"> = true; // false 대입 시 타입 에러
+```
+
+위 코드는 개발자가 임의로 대입할 수 있도록 T라는 타입 파라미터를 정의해두었습니다.
+
+따라서 개발자가 string 타입을 전달한 경우에만 true로 표현됩니다.
+
+## 제너릭 타입의 제약 조건
+
+조건 중에는 제너릭 타입에서만 쓰이는 조건들이 있고, 이는 제약 조건이라고 말합니다.
+
+제약 조건은 ‘만약 ~라면’ 이라는 의미보다는 ‘최소한 이것’ 이라는 의미로 해석하는 것이 옳습니다.
+
+제너릭 인자에 제약 조건을 넣게 되면 조건에 해당하지 않는 경우에는 타입 에러가 발생하게 됩니다.
+
+```tsx
+type Example<T extends string> = true;
+
+const e1: Example<string> = true; // 문제 없음
+const e2: Example<number> = true; // 제너릭 인자 부분에서 컴파일 에러
+```
+
+## 조건부 타입과 infer 키워드
+
+```tsx
+type Example<T> = T extends (...param: any[]) => infer R ? R : never;
+
+const add = (a: number, b: number): number => a + b;
+
+const e1: Example<typeof add> = 3; // number
+```
+
+위 타입에서 `Example<T>`는 만약 T가 함수 타입을 의미한다면 그 리턴 타입인 R로 추론되게 하고 있습니다.
+
+이 때 사용된 것이 바로 infer 키워드입니다. ( R은 임의로 부여한 식별자일 뿐, R 자체에는 의미가 없습니다. )
+
+T처럼 타입 파라미터에서 무엇이 대입될지 아직 모르는 상태에서 infer 키워드는 매우 유용합니다.
+
+infer 키워드는 이처럼 아직 확정되지 않은 가상의 타입을 추론하는 데에 도움을 줍니다.
+
+만약 위 예제에서 add의 리턴 타입을 string으로 변경한다면 e1의 타입은 반드시 string이어야 합니다.
+
+단 주의해야 할 게 있다면, infer 키워드는 그 조건을 만족하는 최소한의 타입이라는 점입니다.
+
+아래 코드를 통해 더 자세히 알아봅시다.
+
+## string literal 타입에서의 infer 키워드
+
+```tsx
+type Example<T extends string> = T extends `${infer F}${string}` ? F : string;
+
+const e1: Example<"abcde"> = "a";
+```
+
+위 코드에서는 ‘a’가 대입된 경우가 아니라면 e1은 에러를 뱉습니다.
+
+infer F가 ‘a’ 라는 문자열 리터럴 타입으로 추론되었기 때문인데요, 왜 하필 ‘a’일까요?
+
+이 의문은 F가 ‘a’가 아니라 ‘abc’여도 ‘abc’와 string의 조합이 T를 만족하기 때문입니다.
+
+정답은 타입스크립트의 타입 추론이 가장 적절한 타입 ( Best Common Type ) 을 추론하기 때문입니다.
+
+infer 키워드 역시 가장 적절한 타입으로 최소한의 범위로 반영된 결과라고 이해할 수 있습니다.
+
+## 배열에서의 infer 키워드
+
+```tsx
+type Example<T> = T extends [infer F, ...infer Rest] ? F : never;
+
+const e: Example<[1, 3]> = 1; // 1만이 대입 가능
+```
+
+T가 F와 나머지 타입 Rest로 이루어진 타입이라면 첫번째 인자였을 F로 추론합니다.
+
+그리고 그 외 나머지 배열들은 …infer Rest 라는 형식을 통해 나머지 배열 타입으로 추론됩니다.
+
+즉, 예제 코드에서 `Example<[1, 3]>`은 1로 추론되어야 합니다.
+
+Rest 역시 이전 코드의 식별자 R과 같이 제가 정한 것일 뿐 Rest라는 식별자엔 아무런 의미가 없습니다.
+
+## 타입 파라미터에서의 infer 키워드
+
+```tsx
+type Example<T> = T extends Array<infer R> ? R : never;
+
+const e: Example<number[]> = 3; // R이 number 타입으로 추론되기 때문에 3 대입 가능.
+```
+
+제약조건이 아닌 extends문에서는 infer 키워드를 활용해서 조건을 표현할 수 있습니다.
+
+infer 키워드는 아직 존재하지 않는 가상의 타입을 표현하기 위해 만들어졌습니다.
+
+infer 키워드는 제법 똘똘하게 동작하기 때문에 홀로 사용될 수도 있지만 제너릭의 인자로도 대입될 수 있습니다.
+
+대부분의 infer 키워드는 제너릭의 인자와 함께 쓰이며, 더 풍부한 표현이 가능하게 돕습니다.
+
+```tsx
+type IsNever<T> = [T] extends [never] ? true : false;
+```
+
+never는 검사가 안되기 때문에 우리는 IsNever 타입과 같이 튜플의 힘을 빌려서 never를 검증할 수 있습니다.
+
+## as keyword
+
+as 키워드는 타입을 컴파일러에게 직접 알려주는 구문으로 잘못 지정 시 잘못된 타입을 추론하는 원인이 됩니다.
+
+하지만 as 키워드를 쓰지 않고는 해결할 수 없는 타입들도 존재합니다.
+
+```tsx
+const add = <T extends number>(
+    a: T,
+    b: number
+): T extends number ? number : "error" => {
+    if (typeof a !== "number") {
+        return "error"; // 'string' 형식은 'T extends number ? number : "error"' 형식에 할당할 수 없습니다.ts(2322)
+    }
+    return a + b; //'string' 형식은 'T extends number ? number : "error"' 형식에 할당할 수 없습니다.ts(2322)
+};
+```
+
+위 코드에서 add 함수는 리턴 문 마다 에러가 발생합니다.
+
+add 함수는 타입 T가 number일 경우에는 number를, 아닐 경우에는 ‘error’라는 리터럴 문자를 리턴합니다.
+
+우리는 이 코드를 보면서 내부 코드가 리턴 타입에 맞게 정의된 걸 충분히 이해할 수 있을 텐데요,
+
+하지만 컴파일러는 if에 의해 분기처리된 리턴문을 이해하지 못합니다.
+
+타입스크립트 컴파일러는 코드를 컴파일하는 게 아니라, 어디까지나 타입을 컴파일하는 것이니깐요.
+
+```tsx
+const add = <T extends number>(
+    a: T,
+    b: number
+): T extends number ? number : "error" => {
+    if (typeof a !== "number") {
+        return "error" as T extends number ? number : "error";
+    }
+    return (a + b) as T extends number ? number : "error";
+};
+```
+
+그래서 우리는 이런 식으로 타입을 수정해야 합니다.
+
+앞서 말씀드린 것처럼 as의 사용은 최대한 지양하는 게 맞지만 피치 못할 경우 직접 명시해줘야 할 수도 있습니다.
+
+## 어쩔 수 없이 as 타입을 써야 할 때의 축약
+
+```tsx
+const add = <T extends number, P extends T extends number ? number : "error">(
+    a: T,
+    b: number
+): T extends number ? number : "error" => {
+    if (typeof a !== "number") {
+        return "error" as P;
+    }
+    return (a + b) as P;
+};
+```
+
+타입 파라미터 P를 추가하여 미리 복잡한 타입 정의를 추가해둘 수 있습니다.
+
+이후 P와 동일한 타입은 as P라고만 쓰면 됩니다.
+
+중복된 as 타입들을 깔끔하게 정리할 수 있지만, 이 역시 문제가 있습니다.
+
+만의 하나의 경우지만 개발자가 꺽쇠 기호 내부에 P를 직접 명시하려고 드는 경우입니다.
+
+안 건들면 아무런 문제가 없습니다.
+
+## keyof keyword
+
+```tsx
+type Example = {
+    id: number;
+    name: string;
+};
+type Keys = keyof Example; // 'id' | 'name'
+```
+
+keyof 키워드는 이후 주어지는 대상의 키들만을 모은 타입으로, 유니온 타입으로 추론됩니다.
+
+## Mapped type
+
+```tsx
+type EnumType = "a" | "b" | "c" | "d";
+type Example = {
+    [K in EnumType]: number;
+};
+```
+
+키를 다시 객체 타입으로 변환하고 싶다면 Mapped type을 이용해야 합니다.
+
+이 때 유니온 타입으로부터 in 구문을 써서 ‘각각의’ 라는 의미로 K를 지정할 수 있습니다.
+
+위 예시에서 정의된 EnumType의 각각은 ‘a’, ‘b’, ‘c’, ‘d’입니다.
+
+따라서 아래와 같은 타입으로 추론됩니다.
+
+```tsx
+type Example = {
+    a: number;
+    b: number;
+    c: number;
+    d: number;
+};
+```
+
+## 배열과 Mapped type
+
+자바스크립트에서는 배열도 객체였습니다. 타입에서는 어떨까요?
+
+```tsx
+type NumberArray = [1, 2, 3, 4, 5];
+type NumberToString<T extends number> = `${T}`;
+
+type NumberArrayToStringArray<T extends number[]> = {
+    [key in keyof T]: `${T[key]}`;
+};
+
+type Answer = NumberArrayToStringArray<NumberArray>; // ["1", "2", "3", "4", "5"]
+```
+
+타입 레벨에서도 배열은 객체와 마찬가지로 Mapped type을 사용할 수 있습니다.
